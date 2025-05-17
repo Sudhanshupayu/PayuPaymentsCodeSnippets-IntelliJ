@@ -1,0 +1,13 @@
+<idea-plugin>
+    <id>in.payu.payupayments</id>
+    <name>Payu Payments Code Snippets</name>
+    <vendor>Payu Payments</vendor>
+
+    <depends>com.intellij.modules.platform</depends>
+    <depends>com.intellij.modules.java</depends>
+
+    <extensions defaultExtensionNs="com.intellij">
+        <!-- Register the live template file directly (modern approach) -->
+        <defaultLiveTemplates file="/liveTemplates/java_templates.xml"/>
+    </extensions>
+</idea-plugin>
