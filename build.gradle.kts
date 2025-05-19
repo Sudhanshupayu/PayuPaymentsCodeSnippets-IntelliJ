@@ -1,37 +1,28 @@
 plugins {
     id("java")
-    id("org.jetbrains.kotlin.jvm") version "1.8.20"
+    id("org.jetbrains.kotlin.jvm") version "1.9.22"
     id("org.jetbrains.intellij.platform") version "2.3.0"
 }
 
 group = "in.payu.payupayments"
-version = "0.0.2"
+version = "0.0.1"
 
 repositories {
     mavenCentral()
-    maven { url = uri("https://www.jetbrains.com/intellij-repository/releases") }
-    maven { url = uri("https://www.jetbrains.com/intellij-repository/snapshots") }
-    maven { url = uri("https://plugins.jetbrains.com/maven") }
-
     intellijPlatform {
         defaultRepositories()
     }
 }
 
-// Configure Gradle IntelliJ Platform Plugin with specific version
+// Configure Gradle IntelliJ Plugin
 dependencies {
     intellijPlatform {
-        // Use a specific version number (2020.3.4) for better compatibility with the platform plugin
-        create("IC", "2020.3.4") // Using 2020.3.4 as it's well-supported by the platform plugin
+        // Target IntelliJ IDEA 2022.3
+        create("IC", "2022.3")
+        testFramework(org.jetbrains.intellij.platform.gradle.TestFrameworkType.Platform)
 
-        // Required plugins
-        bundledPlugin("com.intellij.modules.java")
+        // Need Java plugin dependency for Java templates
         bundledPlugin("com.intellij.java")
-
-        // Optional plugins
-        bundledPlugin("com.intellij.maven")
-        bundledPlugin("org.jetbrains.plugins.gradle")
-        bundledPlugin("org.jetbrains.kotlin")
     }
 }
 
@@ -46,21 +37,23 @@ intellijPlatform {
         }
 
         ideaVersion {
-            // While we're building against 2020.3.4, we can still support back to 203
-            sinceBuild = "203" // IntelliJ IDEA 2020.3
-            untilBuild = "252.*" // IntelliJ IDEA 2025.2
+            sinceBuild = "192"
+            untilBuild = "252.*"
         }
 
         description = """
             # PayU Integration Snippets for Intelli J Idea IDE
-            This extension provides handy code snippets (Sample Application) for integrating PayU payment gateway in Node.js (JavaScript), PHP, Java, CSharp, Golang, ReactNative, Flutter and Python.
-            ## Usage
-            • Open a file in Java.
-            • Move the cursor wherever you want the Payu Payments code to be added.
-            • Type the `payu` as prefix, and search for the required code from the dropdown.
-            • Modify the required and optional parameters as required and initiate payments and refunds seamlessly using the Payu hosted checkout.
-            ## Supported languages
-             - **Java**.
+
+                This extension provides handy code snippets (Sample Application) for integrating PayU payment gateway in Node.js (JavaScript), PHP, Java, CSharp, Golang, ReactNative, Flutter and Python.
+                
+                ## Usage
+                • Open a file in Java.
+                • Move the cursor wherever you want the Payu Payments code to be added.
+                • Type the `payu` as prefix, and search for the required code from the dropdown.
+                • Modify the required and optional parameters as required and initiate payments and refunds seamlessly using the Payu hosted checkout.
+                
+                ## Supported languages
+                 - **Java**.
         """.trimIndent()
 
         changeNotes = """
@@ -70,32 +63,36 @@ intellijPlatform {
     }
 }
 
-// Java configuration
+// Configure Java/Kotlin for JDK compatibility
 java {
     toolchain {
-        languageVersion.set(JavaLanguageVersion.of(8))
+        languageVersion.set(JavaLanguageVersion.of(22))
+    }
+}
+
+kotlin {
+    // Use the new compilerOptions DSL instead of kotlinOptions
+    compilerOptions {
+        jvmTarget.set(org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_21)
+        languageVersion.set(org.jetbrains.kotlin.gradle.dsl.KotlinVersion.KOTLIN_2_0)
+        apiVersion.set(org.jetbrains.kotlin.gradle.dsl.KotlinVersion.KOTLIN_2_0)
     }
 }
 
 tasks {
     withType<JavaCompile> {
-        sourceCompatibility = "1.8"
-        targetCompatibility = "1.8"
-    }
-
-    withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
-        kotlinOptions {
-            jvmTarget = "1.8"
-            languageVersion = "1.8"
-            apiVersion = "1.8"
-        }
+        sourceCompatibility = "21"
+        targetCompatibility = "21"
     }
 
     buildSearchableOptions {
-        enabled = false // Disable this task since it's causing issues
+        enabled = false
     }
 
     runIde {
-        jvmArgs("-Xmx2g")
+        // Add properties to fix the Gradle JVM matrix error
+        jvmArgs("-Xmx2g",
+            "-Dorg.jetbrains.plugins.gradle.jvmcompat.GradleJvmSupportMatrix.forceMaxJavaVersion=22",
+            "-Dorg.jetbrains.plugins.gradle.jvmcompat.GradleJvmSupportMatrix.skipJavaVersionParsing=true")
     }
 }
