@@ -38,8 +38,8 @@ intellijPlatform {
         }
 
         ideaVersion {
-            sinceBuild = "203" // Supports IntelliJ versions from 2020.3
-            untilBuild = "" // Future-proof for IntelliJ versions beyond 2025
+            sinceBuild = "203.*" // Supports IntelliJ versions from 2020.3
+            untilBuild = "252.*" // Future-proof for IntelliJ versions beyond 2025
         }
 
         description = """
