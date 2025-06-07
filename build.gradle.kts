@@ -85,7 +85,7 @@ tasks {
     }
 
     buildSearchableOptions {
-        enabled = false // Disable this task since it's causing issues
+        enabled = true // Disable this task since it's causing issues
     }
 
     runIde {
