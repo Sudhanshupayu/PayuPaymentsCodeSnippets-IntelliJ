@@ -5,7 +5,7 @@ plugins {
 }
 
 group = "in.payu.payupayments"
-version = "0.0.2"
+version = "0.0.3"
 
 repositories {
     mavenCentral()
@@ -21,17 +21,9 @@ repositories {
 // Configure Gradle IntelliJ Platform Plugin with specific version
 dependencies {
     intellijPlatform {
-        // Use a specific version number (2020.3.4) for better compatibility with the platform plugin
-        create("IC", "2020.3.4") // Using 2020.3.4 as it's well-supported by the platform plugin
-
-        // Required plugins
-        bundledPlugin("com.intellij.modules.java")
-        bundledPlugin("com.intellij.java")
-
-        // Optional plugins
-        bundledPlugin("com.intellij.maven")
-        bundledPlugin("org.jetbrains.plugins.gradle")
-        bundledPlugin("org.jetbrains.kotlin")
+        create("IC", "2025.1.1") // IntelliJ IDEA (Community Edition) version
+        bundledPlugin("com.intellij.java") // Java support
+        bundledPlugin("org.jetbrains.kotlin") // Kotlin plugin support
     }
 }
 
@@ -46,9 +38,8 @@ intellijPlatform {
         }
 
         ideaVersion {
-            // While we're building against 2020.3.4, we can still support back to 203
-            sinceBuild = "203" // IntelliJ IDEA 2020.3
-            untilBuild = "252.*" // IntelliJ IDEA 2025.2
+            sinceBuild = "203" // Supports IntelliJ versions from 2020.3
+            untilBuild = "300.*" // Future-proof for IntelliJ versions beyond 2025
         }
 
         description = """
@@ -64,8 +55,10 @@ intellijPlatform {
         """.trimIndent()
 
         changeNotes = """
-            # 0.0.2 - Fixes and improvement in the lines of codes. 
-            # Extended support to more older versions of Java, and Intelli J Idea older versions
+            # 0.0.3 - Fixes and improvement in the lines of codes.
+            # Added ICON to the Plugin
+            # Improved multi-version IntelliJ compatibility
+            # Updated to Kotlin JVM compatibility mode
         """.trimIndent()
     }
 }
@@ -73,7 +66,7 @@ intellijPlatform {
 // Java configuration
 java {
     toolchain {
-        languageVersion.set(JavaLanguageVersion.of(8))
+        languageVersion.set(JavaLanguageVersion.of(22))
     }
 }
 
@@ -97,5 +90,8 @@ tasks {
 
     runIde {
         jvmArgs("-Xmx2g")
+    }
+    compileJava {
+        options.release.set(8) // Generate Java 8-compatible bytecode
     }
 }
